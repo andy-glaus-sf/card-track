@@ -1,19 +1,31 @@
 include <params.scad>
 
 // ── 90° corner track section ──────────────────────────────────────────────────
-// Entry face at θ=0° (aligns with straight section +Y boss end).
-// Exit  face at θ=90° (aligns with straight section -Y socket end).
-// External connector pads match the straight section exactly.
+// Entry face at θ=0° → aligns with straight section +Y tab end (receives tab).
+// Exit  face at θ=90° → presents tabs to the next straight section socket end.
+// Puzzle connectors match the straight section exactly.
 
 track_total_w = track_inner_w + 2 * track_wall_t;
 track_total_h = track_floor_t + track_wall_h;
-
-// Corner centre-line radius
 corner_cl_r   = corner_inner_r + track_wall_t + track_inner_w / 2;
 
-// Pad centre offsets (same as straight section — ensures sections align)
 pad_cx_L =  -(conn_pad_w / 2);
 pad_cx_R = track_total_w + (conn_pad_w / 2);
+
+// ── 2D profiles (shared with straight section logic) ─────────────────────────
+module puzzle_tab_2d() {
+    translate([-tab_neck_w / 2, 0])
+        square([tab_neck_w, tab_neck_l]);
+    translate([0, tab_neck_l])
+        circle(d = tab_knob_d, $fn = 64);
+}
+
+module puzzle_socket_2d() {
+    translate([-(tab_neck_w + tab_clr) / 2, 0])
+        square([tab_neck_w + tab_clr, tab_neck_l + tab_clr / 2]);
+    translate([0, tab_neck_l])
+        circle(d = tab_knob_d + tab_clr, $fn = 64);
+}
 
 // ── Swept corner body ─────────────────────────────────────────────────────────
 module corner_section() {
@@ -27,45 +39,48 @@ module corner_section() {
     }
 }
 
-// ── Entry-face connector pads (θ=0°, face points in +Y) ──────────────────────
-// The entry face of the corner is at Y=0, X = corner_inner_r … corner_inner_r+track_total_w
-// Pads sit outside that face (X < corner_inner_r and X > corner_inner_r+track_total_w)
+// ── Entry face connectors (θ=0°, face points in +Y) ──────────────────────────
+// Entry face is at Y=0, track spans X = corner_inner_r … corner_inner_r+track_total_w
+// Pads sit outside that span in X.
 
 module entry_pads() {
     for (cx = [pad_cx_L, pad_cx_R]) {
-        x0 = corner_inner_r + cx - conn_pad_w / 2;
-        translate([x0, 0, 0])
+        translate([corner_inner_r + cx - conn_pad_w / 2, 0, 0])
             cube([conn_pad_w, conn_pad_len, conn_pad_h]);
     }
 }
 
-// Entry sockets — cut into the +Y-pointing entry face (opening toward +Y)
+// Entry sockets — opening at Y=0, cut toward +Y
 module entry_sockets() {
     for (cx = [pad_cx_L, pad_cx_R]) {
-        translate([corner_inner_r + cx, 0, conn_pad_h / 2])
-            rotate([90, 0, 0])
-                cylinder(d = conn_d + conn_clr, h = conn_h + 1, $fn = 48);
+        translate([corner_inner_r + cx, 0, -0.1])
+            linear_extrude(height = conn_pad_h + 0.2)
+                mirror([0, 1, 0])
+                    puzzle_socket_2d();
     }
 }
 
-// ── Exit-face connector pads (θ=90°, face points in +X) ──────────────────────
-// At θ=90° the face runs along X = 0, Y = corner_inner_r … corner_inner_r+track_total_w
-// "Outside the wall" in the rotated frame means Y < corner_inner_r or Y > corner_inner_r+track_total_w
+// ── Exit face connectors (θ=90°, face points in -X, i.e. X=0 plane) ──────────
+// At θ=90° the swept track exits at X=0, track spans Y = corner_inner_r … corner_inner_r+track_total_w
+// Pads sit outside that span in Y.
 
 module exit_pads() {
     for (cx = [pad_cx_L, pad_cx_R]) {
-        y0 = corner_inner_r + cx - conn_pad_w / 2;
-        translate([0, y0, 0])
+        translate([0, corner_inner_r + cx - conn_pad_w / 2, 0])
             cube([conn_pad_len, conn_pad_w, conn_pad_h]);
     }
 }
 
-// Exit bosses — protrude from exit face in -X direction (toward incoming section)
-module exit_bosses() {
+// Exit tabs — protrude from X=0 face in -X direction
+// Tab 2D profile protrudes in +Y; rotate so +Y → -X
+module exit_tabs() {
     for (cx = [pad_cx_L, pad_cx_R]) {
-        translate([0, corner_inner_r + cx, conn_pad_h / 2])
-            rotate([0, 90, 0])
-                cylinder(d = conn_d, h = conn_h, $fn = 48);
+        translate([0, corner_inner_r + cx, conn_pad_h])
+            rotate([0, 90, 0])          // +Z of extrusion → -X
+                rotate([0, 0, 90])      // align neck protrusion to point in -X
+                    linear_extrude(height = tab_neck_l + tab_knob_d / 2)
+                        mirror([0, 1, 0])
+                            puzzle_tab_2d();
     }
 }
 
@@ -75,7 +90,7 @@ difference() {
         corner_section();
         entry_pads();
         exit_pads();
-        exit_bosses();
+        exit_tabs();
     }
     entry_sockets();
 }

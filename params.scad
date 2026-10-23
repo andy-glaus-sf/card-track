@@ -13,14 +13,20 @@ track_wall_t    = 5;     // wall thickness
 track_floor_t   = 4;     // floor thickness
 track_sec_len   = 200;   // length of one straight section
 
-// Track end connectors — external pads outside each wall
-// pad sits outside the channel so the cart path is never blocked
-conn_d       = 14;   // boss diameter (mm)
-conn_h       = 10;   // boss protrusion / socket depth
-conn_clr     = 1.0;  // socket extra diameter = 0.5 mm clearance per side
-conn_pad_w   = 20;   // pad width (X) — 3 mm wall material around boss on each side
-conn_pad_h   = 20;   // pad height (Z)
-conn_pad_len = 15;   // pad length (Y) anchored at each track end
+// Track end connectors — puzzle-piece tabs on external pads outside each wall
+// Pads sit outside the channel so the cart path is never blocked.
+// Each tab: rectangular neck + round knob (jigsaw-style), extruded full pad height.
+// One tab per wall per end; mating section has the mirror-image socket.
+
+tab_neck_w   = 12;           // neck width (X)
+tab_neck_l   = 8;            // neck length (protrusion from pad face)
+tab_knob_d   = 22;           // knob diameter — wider than neck, creates interlock
+tab_clr      = 1.0;          // total clearance on width/diameter (0.5 mm per side)
+
+// Derived pad dimensions — 3 mm material around knob on every side
+conn_pad_w   = tab_knob_d + 6;                  // 28 mm
+conn_pad_h   = tab_knob_d + 6;                  // 28 mm
+conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm
 
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate

@@ -6,7 +6,8 @@ bearing_id = 8;
 bearing_w  = 7;
 
 // Track channel (straight and corner sections share this profile)
-track_inner_w   = 150;   // inner width of U-channel
+// body 50 mm + posts 10 mm each side = 70 mm total → 3 mm clearance each side in 76 mm channel
+track_inner_w   = 76;    // inner width of U-channel
 track_wall_h    = 32;    // wall height above floor
 track_wall_t    = 5;     // wall thickness
 track_floor_t   = 4;     // floor thickness
@@ -19,8 +20,8 @@ peg_h = 4;
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate
 plate_t      = 3;      // plate thickness
-// body is 124 mm wide; posts (10 mm each side) bring total to 144 mm → 3 mm clearance each side in 150 mm channel
-cart_body_w  = 124;
+// body is 50 mm wide; posts (10 mm each side) bring total to 70 mm → 3 mm clearance each side in 76 mm channel
+cart_body_w  = 50;
 cart_body_h  = 26;     // height of cart body (must be ≤ track_wall_h)
 wheelbase    = 120;    // front-to-rear axle spacing
 

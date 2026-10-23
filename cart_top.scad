@@ -9,8 +9,8 @@ include <params.scad>
 // surface for grip while the glue cures.
 
 // Peg positions — must match cart_bottom.scad exactly.
-peg_x = cart_body_w  / 2 - 4;   // 21 mm from centre
-peg_y = cart_body_len / 2 - 5;  // 65 mm from centre
+peg_x = cart_body_w  / 2 - cart_wall_t / 2;   // 21.5 mm — mid-wall position
+peg_y = cart_body_len / 2 - cart_wall_t / 2;  // 66.5 mm — mid-wall position
 
 difference() {
     // Plate centred on X=0, Y=0

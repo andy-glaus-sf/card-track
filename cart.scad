@@ -10,8 +10,8 @@ include <params.scad>
 // Z = 26 → plate top face
 // Z = 29 → peg tips
 
-peg_x = cart_body_w  / 2 - 4;
-peg_y = cart_body_len / 2 - 5;
+peg_x = cart_body_w  / 2 - cart_wall_t / 2;
+peg_y = cart_body_len / 2 - cart_wall_t / 2;
 
 module stub_axle() {
     cylinder(d = post_d, h = post_len - 1, $fn = 32);
@@ -22,8 +22,11 @@ module stub_axle() {
 module cart_body() {
     difference() {
         cube([cart_body_w, cart_body_len, cart_body_h], center = true);
-        translate([0, 0, 4])
-            cube([cart_body_w - 16, cart_body_len - 20, cart_body_h], center = true);
+        // Full-height hollow — open top AND bottom, 7 mm walls
+        cube([cart_body_w - 2 * cart_wall_t,
+              cart_body_len - 2 * cart_wall_t,
+              cart_body_h + 0.2],
+             center = true);
         for (sx = [-1, 1], sy = [-1, 1]) {
             translate([
                 sx * cart_body_w / 2,

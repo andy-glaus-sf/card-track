@@ -8,10 +8,26 @@ bearing_w  = 7;
 // Track channel (straight and corner sections share this profile)
 // body 50 mm + posts 10 mm each side = 70 mm total → 3 mm clearance each side in 76 mm channel
 track_inner_w   = 76;    // inner width of U-channel
-track_wall_h    = 32;    // wall height above floor
+track_wall_h    = 11;    // wall height above floor
 track_wall_t    = 5;     // wall thickness
 track_floor_t   = 4;     // floor thickness
 track_sec_len   = 200;   // length of one straight section
+
+// Bearing contact floor rails — narrow floor strips along the two bearing lines.
+// The floor is ONLY present at (a) these two rails and (b) full-width end sections
+// under the connector pads.  Everything else is open to save material.
+//
+//  Floor plan view (bottom of straight section):
+//   [=====END FLOOR=====]  ← full width, conn_pad_len deep
+//   |  |             |  |
+//   |  | rail   rail |  |  ← two 9 mm rails running full length
+//   |  |             |  |
+//   [=====END FLOOR=====]
+//
+// Rail X positions: bearing midpoint sits at (channel_centre ± body_half ∓ bearing_w/2)
+// Left  rail centre: track_wall_t + track_inner_w/2 − cart_body_w/2 − bearing_w/2
+// Right rail centre: track_wall_t + track_inner_w/2 + cart_body_w/2 + bearing_w/2
+bear_rail_w = bearing_w + 2;  // 9 mm — bearing width + 2 mm margin
 
 // Track end connectors — puzzle-piece tabs on the track underside.
 // The two outer walls extend bot_ext mm below the floor face (Z=0); connector
@@ -35,7 +51,7 @@ conn_pad_w   = tab_knob_d + 6;                  // 28 mm — pad / tab cross-sec
 conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm — pad depth / tab reach
 
 // Height of wall extension below Z=0; also the extrusion height of the connector pads.
-bot_ext = 14;
+bot_ext = 3;
 
 // X centres of the two connector pads — quarter-points of the inner channel.
 // Pad 1 centre ≈ 24 mm from left edge; Pad 2 centre ≈ 62 mm from left edge.
@@ -51,6 +67,7 @@ cart_body_w  = 50;
 cart_body_h  = 22;     // height of cart body — reduced 4 mm from original 26 mm
 wheelbase    = 120;    // front-to-rear axle spacing
 cart_body_len = wheelbase + 20;  // 140 mm front-to-rear
+cart_wall_t   = 7;               // hollow cart body wall thickness (all four sides)
 
 // Alignment pegs (body → plate)
 // Pegs sit at the 4 solid corners of the body top face, outside the lightening pocket.

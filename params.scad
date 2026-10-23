@@ -45,11 +45,19 @@ bot_conn_x2 = track_wall_t + track_inner_w * 0.75;
 
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate
-plate_t      = 3;      // plate thickness
+plate_t      = 4;      // plate thickness (thicker to give pegs something to grip)
 // body is 50 mm wide; posts (10 mm each side) bring total to 70 mm → 3 mm clearance each side in 76 mm channel
 cart_body_w  = 50;
-cart_body_h  = 26;     // height of cart body (must be ≤ track_wall_h)
+cart_body_h  = 22;     // height of cart body — reduced 4 mm from original 26 mm
 wheelbase    = 120;    // front-to-rear axle spacing
+cart_body_len = wheelbase + 20;  // 140 mm front-to-rear
+
+// Alignment pegs (body → plate)
+// Pegs sit at the 4 solid corners of the body top face, outside the lightening pocket.
+// Plate holes are through-holes; pegs protrude above the plate surface for grip during gluing.
+peg_d    = 4.0;   // peg cylinder diameter
+peg_h    = 7.0;   // peg height above body top face (extends 3 mm above plate)
+hole_d   = 4.3;   // plate hole diameter (0.3 mm clearance — easy slide, glue fills gap)
 
 // Stub-axle posts (bearing friction-fit over post)
 post_d       = 8.2;   // 0.2 mm press-fit onto 608ZZ bore (8 mm)

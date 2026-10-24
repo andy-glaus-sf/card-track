@@ -1,13 +1,15 @@
 include <params.scad>
 
 // ── Straight track section (200 mm) ──────────────────────────────────────────
-// Print flat on bed.
+// Print flat on bed — bottom face is perfectly flat at Z=0, no supports needed.
 //
 // Floor is open between the two bearing-contact rails and the end connector
 // sections — only material that is structurally required is printed.
 //
-// +Y end: two puzzle tabs protrude below the floor level from the bottom pads.
-// -Y end: two matching puzzle sockets cut into the bottom pads.
+// +Y end: two puzzle tabs extrude from the end face, flush with the floor
+//         (Z=0 to Z=track_floor_t).  Fully supported during printing.
+// -Y end: two matching puzzle sockets are through-holes in the end-section floor
+//         (open bottom and top — prints without supports).
 
 track_total_w = track_inner_w + 2 * track_wall_t;
 track_total_h = track_floor_t + track_wall_h;
@@ -37,12 +39,11 @@ module puzzle_socket_2d() {
 // Built as a union of discrete structural elements — no subtractive floor.
 module track_body() {
     union() {
-        // Left wall — full length, full height, plus bot_ext below Z=0
-        translate([0, 0, -bot_ext])
-            cube([track_wall_t, track_sec_len, track_total_h + bot_ext]);
+        // Left wall — full length, full height, flush at Z=0
+        cube([track_wall_t, track_sec_len, track_total_h]);
         // Right wall
-        translate([track_total_w - track_wall_t, 0, -bot_ext])
-            cube([track_wall_t, track_sec_len, track_total_h + bot_ext]);
+        translate([track_total_w - track_wall_t, 0, 0])
+            cube([track_wall_t, track_sec_len, track_total_h]);
 
         // End floor — full width, conn_pad_len deep at each end
         cube([track_total_w, conn_pad_len, track_floor_t]);
@@ -57,24 +58,17 @@ module track_body() {
     }
 }
 
-// ── Bottom connector pads (between walls, below floor face) ───────────────────
-module bot_conn_pads(y0) {
-    for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx - conn_pad_w / 2, y0, -bot_ext])
-            cube([conn_pad_w, conn_pad_len, bot_ext]);
-}
-
-// ── Bottom tab: protrudes beyond end face in +Y ───────────────────────────────
+// ── Tab: protrudes beyond end face in +Y, spans full floor thickness ──────────
 module bot_tab(cx, y_face) {
-    translate([cx, y_face, -bot_ext])
-        linear_extrude(height = bot_ext)
+    translate([cx, y_face, 0])
+        linear_extrude(height = track_floor_t)
             puzzle_tab_2d();
 }
 
-// ── Bottom socket: cut into pad, opening at y_face ────────────────────────────
+// ── Socket: through-hole in end-section floor (open bottom and top) ───────────
 module bot_socket(cx, y_face) {
-    translate([cx, y_face, -bot_ext - 0.1])
-        linear_extrude(height = bot_ext + 0.2)
+    translate([cx, y_face, -0.1])
+        linear_extrude(height = track_floor_t + 0.2)
             puzzle_socket_2d();
 }
 
@@ -82,8 +76,6 @@ module bot_socket(cx, y_face) {
 difference() {
     union() {
         track_body();
-        bot_conn_pads(0);
-        bot_conn_pads(track_sec_len - conn_pad_len);
         for (cx = [bot_conn_x1, bot_conn_x2])
             bot_tab(cx, track_sec_len);
     }

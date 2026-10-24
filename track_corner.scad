@@ -34,17 +34,17 @@ module puzzle_socket_2d() {
         circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
-// ── Swept walls (inner + outer, full 90°, with bot_ext extension below floor) ─
-// In rotate_extrude, profile Y = 3D Z.  Y = -bot_ext → Z = -bot_ext.
+// ── Swept walls (inner + outer, full 90°, flush at Z=0) ───────────────────────
+// In rotate_extrude, profile Y = 3D Z.  Y = 0 → Z = 0 (flat bottom).
 module corner_walls() {
     // Inner wall
     rotate_extrude(angle = 90, $fn = 120)
-        translate([corner_inner_r, -bot_ext, 0])
-            square([track_wall_t, track_total_h + bot_ext]);
+        translate([corner_inner_r, 0, 0])
+            square([track_wall_t, track_total_h]);
     // Outer wall
     rotate_extrude(angle = 90, $fn = 120)
-        translate([corner_inner_r + track_inner_w + track_wall_t, -bot_ext, 0])
-            square([track_wall_t, track_total_h + bot_ext]);
+        translate([corner_inner_r + track_inner_w + track_wall_t, 0, 0])
+            square([track_wall_t, track_total_h]);
 }
 
 // ── End floor arcs (full inner width, pad_angle deep at each end) ─────────────
@@ -70,32 +70,20 @@ module corner_bearing_rails() {
             square([bear_rail_w, track_floor_t]);
 }
 
-// ── Entry face (θ=0°, Y=0): sockets ──────────────────────────────────────────
-module entry_bot_pads() {
-    for (cx = [corner_inner_r + bot_conn_x1, corner_inner_r + bot_conn_x2])
-        translate([cx - conn_pad_w / 2, 0, -bot_ext])
-            cube([conn_pad_w, conn_pad_len, bot_ext]);
-}
-
+// ── Entry face (θ=0°, Y=0): through-hole sockets in end-section floor ─────────
 module entry_bot_sockets() {
     for (cx = [corner_inner_r + bot_conn_x1, corner_inner_r + bot_conn_x2])
-        translate([cx, 0, -bot_ext - 0.1])
-            linear_extrude(height = bot_ext + 0.2)
+        translate([cx, 0, -0.1])
+            linear_extrude(height = track_floor_t + 0.2)
                 puzzle_socket_2d();
 }
 
-// ── Exit face (θ=90°, X=0): tabs protruding in −X ────────────────────────────
-module exit_bot_pads() {
-    for (cy = [corner_inner_r + bot_conn_x1, corner_inner_r + bot_conn_x2])
-        translate([0, cy - conn_pad_w / 2, -bot_ext])
-            cube([conn_pad_len, conn_pad_w, bot_ext]);
-}
-
+// ── Exit face (θ=90°, X=0): tabs protruding in −X, flush with floor ───────────
 module exit_bot_tabs() {
     for (cy = [corner_inner_r + bot_conn_x1, corner_inner_r + bot_conn_x2])
-        translate([0, cy, -bot_ext])
+        translate([0, cy, 0])
             rotate([0, 0, 90])
-                linear_extrude(height = bot_ext)
+                linear_extrude(height = track_floor_t)
                     puzzle_tab_2d();
 }
 
@@ -105,8 +93,6 @@ difference() {
         corner_walls();
         corner_end_floors();
         corner_bearing_rails();
-        entry_bot_pads();
-        exit_bot_pads();
         exit_bot_tabs();
     }
     entry_bot_sockets();

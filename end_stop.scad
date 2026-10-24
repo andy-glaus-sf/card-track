@@ -36,12 +36,11 @@ module puzzle_socket_2d() {
 // ── Shared body: two walls + full floor + barrier wall ────────────────────────
 module stop_body() {
     union() {
-        // Left wall
-        translate([0, 0, -bot_ext])
-            cube([track_wall_t, stop_len, track_total_h + bot_ext]);
+        // Left wall — flush at Z=0
+        cube([track_wall_t, stop_len, track_total_h]);
         // Right wall
-        translate([track_total_w - track_wall_t, 0, -bot_ext])
-            cube([track_wall_t, stop_len, track_total_h + bot_ext]);
+        translate([track_total_w - track_wall_t, 0, 0])
+            cube([track_wall_t, stop_len, track_total_h]);
         // Full-width floor (short section — full floor is fine here)
         cube([track_total_w, stop_len, track_floor_t]);
         // Barrier wall at +Y end — blocks the cart from rolling out
@@ -50,42 +49,26 @@ module stop_body() {
     }
 }
 
-// ── Connector pads at -Y face (socket-type stop) ──────────────────────────────
-module socket_pads() {
-    for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx - conn_pad_w / 2, 0, -bot_ext])
-            cube([conn_pad_w, conn_pad_len, bot_ext]);
-}
-
+// ── Socket through-holes in floor at -Y face (socket-type stop) ───────────────
 module socket_cuts() {
     for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx, 0, -bot_ext - 0.1])
-            linear_extrude(height = bot_ext + 0.2)
+        translate([cx, 0, -0.1])
+            linear_extrude(height = track_floor_t + 0.2)
                 puzzle_socket_2d();
 }
 
-// ── Connector pads at +Y face (tab-type stop) ─────────────────────────────────
-// Pads back the tabs at Y = stop_len; tabs protrude beyond the +Y face.
-module tab_pads() {
-    for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx - conn_pad_w / 2, stop_len - conn_pad_len, -bot_ext])
-            cube([conn_pad_w, conn_pad_len, bot_ext]);
-}
-
+// ── Tabs at +Y face: protrude beyond end face, span full floor thickness ───────
 module tab_protrusions() {
     for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx, stop_len, -bot_ext])
-            linear_extrude(height = bot_ext)
+        translate([cx, stop_len, 0])
+            linear_extrude(height = track_floor_t)
                 puzzle_tab_2d();
 }
 
 // ── End stop A — SOCKET type (fits +Y tab end of straight section) ────────────
 module end_stop_socket() {
     difference() {
-        union() {
-            stop_body();
-            socket_pads();
-        }
+        stop_body();
         socket_cuts();
     }
 }
@@ -94,7 +77,6 @@ module end_stop_socket() {
 module end_stop_tab() {
     union() {
         stop_body();
-        tab_pads();
         tab_protrusions();
     }
 }

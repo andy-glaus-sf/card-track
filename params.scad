@@ -29,29 +29,29 @@ track_sec_len   = 200;   // length of one straight section
 // Right rail centre: track_wall_t + track_inner_w/2 + cart_body_w/2 + bearing_w/2
 bear_rail_w = bearing_w + 2;  // 9 mm — bearing width + 2 mm margin
 
-// Track end connectors — puzzle-piece tabs on the track underside.
-// The two outer walls extend bot_ext mm below the floor face (Z=0); connector
-// pads fill the gap between them at each end.  No side protrusions — the cart
-// channel is completely clear.
+// Track end connectors — puzzle-piece tabs flush with the track floor.
+// Tabs extrude from the end face at Z=0, spanning the full floor thickness
+// (track_floor_t).  Sockets are through-holes cut from Z=0 to Z=track_floor_t
+// in the end-section floor — open top and bottom, so no supports are needed
+// when printing flat.  Bottom face of every track section is perfectly flat.
 //
 //  Side view at end face (track lying on table):
 //
-//    ════════════════════════  ← track walls / floor (Z = 0 and up)
-//    |   [ pad ]  [ pad ]  |  ← connector pads hang below floor
-//    |___[_tab__]_[_tab__]_|  ← tabs protrude beyond the end face
-//      left wall        right wall
+//    ════════════════════════  ← track walls (Z = 0 to track_total_h)
+//    ┌──────────────────────┐  ← floor (Z = 0 to track_floor_t)
+//    │  [socket] [socket]   │  ← through-holes in floor
+//    └──────────────────────┘  ← bottom face at Z = 0 (flat)
 //
+//  +Y end face: tabs protrude beyond end face, spanning Z = 0..track_floor_t
+//  -Y end face: sockets are through-holes in the end-section floor
 
 tab_neck_w   = 12;           // neck width
-tab_neck_l   = 8;            // neck length (protrusion from pad end face)
+tab_neck_l   = 8;            // neck length (protrusion from end face)
 tab_knob_d   = 22;           // knob diameter — wider than neck, creates interlock
 tab_clr      = 1.0;          // total clearance on width/diameter (0.5 mm per side)
 
-conn_pad_w   = tab_knob_d + 6;                  // 28 mm — pad / tab cross-section width
-conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm — pad depth / tab reach
-
-// Height of wall extension below Z=0; also the extrusion height of the connector pads.
-bot_ext = 3;
+conn_pad_w   = tab_knob_d + 6;                  // 28 mm — connector cross-section width
+conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm — floor depth / tab reach
 
 // X centres of the two connector pads — quarter-points of the inner channel.
 // Pad 1 centre ≈ 24 mm from left edge; Pad 2 centre ≈ 62 mm from left edge.

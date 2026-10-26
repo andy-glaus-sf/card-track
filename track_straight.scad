@@ -11,14 +11,8 @@ include <params.scad>
 // -Y end: two matching puzzle sockets are through-holes in the end-section floor
 //         (open bottom and top — prints without supports).
 
-track_total_w = track_inner_w + 2 * track_wall_t;
-track_total_h = track_floor_t + track_wall_h;
-
-// ── Bearing rail X positions in track coordinates ─────────────────────────────
-// Left  bearing contact: channel_centre − cart_body_half − bearing_mid
-// Right bearing contact: channel_centre + cart_body_half + bearing_mid
-bear_cx_L = track_wall_t + track_inner_w / 2 - cart_body_w / 2 - bearing_w / 2;
-bear_cx_R = track_wall_t + track_inner_w / 2 + cart_body_w / 2 + bearing_w / 2;
+// track_total_w, bear_cx_L, bear_cx_R now defined in params.scad
+track_total_h = track_floor_t + rail_ch_wall_h;
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
@@ -35,26 +29,33 @@ module puzzle_socket_2d() {
         circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
+// ── Single bearing groove channel (extrudes along Y) ─────────────────────────
+// Origin at outer-left corner of the cross-section.
+module bearing_groove(len) {
+    // Outer wall
+    cube([rail_ch_wall_t, len, track_total_h]);
+    // Floor
+    translate([rail_ch_wall_t, 0, 0])
+        cube([rail_ch_w, len, track_floor_t]);
+    // Inner wall
+    translate([rail_ch_wall_t + rail_ch_w, 0, 0])
+        cube([rail_ch_wall_t, len, track_total_h]);
+}
+
 // ── Track body ────────────────────────────────────────────────────────────────
-// Built as a union of discrete structural elements — no subtractive floor.
 module track_body() {
     union() {
-        // Left wall — full length, full height, flush at Z=0
-        cube([track_wall_t, track_sec_len, track_total_h]);
-        // Right wall
-        translate([track_total_w - track_wall_t, 0, 0])
-            cube([track_wall_t, track_sec_len, track_total_h]);
+        // Left bearing groove
+        translate([bear_cx_L - rail_ch_w / 2 - rail_ch_wall_t, 0, 0])
+            bearing_groove(track_sec_len);
+        // Right bearing groove
+        translate([bear_cx_R - rail_ch_w / 2 - rail_ch_wall_t, 0, 0])
+            bearing_groove(track_sec_len);
 
-        // End floor — full width, conn_pad_len deep at each end
+        // End floor bridges — full-width, conn_pad_len deep at each end
         cube([track_total_w, conn_pad_len, track_floor_t]);
         translate([0, track_sec_len - conn_pad_len, 0])
             cube([track_total_w, conn_pad_len, track_floor_t]);
-
-        // Bearing contact rails — narrow strips running the full length
-        translate([bear_cx_L - bear_rail_w / 2, 0, 0])
-            cube([bear_rail_w, track_sec_len, track_floor_t]);
-        translate([bear_cx_R - bear_rail_w / 2, 0, 0])
-            cube([bear_rail_w, track_sec_len, track_floor_t]);
     }
 }
 

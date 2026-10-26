@@ -8,16 +8,16 @@ include <params.scad>
 // middle.  Two bearing-arc strips run the full 90° to give bearings a rolling
 // surface throughout the turn.
 
-track_total_w = track_inner_w + 2 * track_wall_t;
-track_total_h = track_floor_t + track_wall_h;
+// track_total_w and bear_cx_L/R now defined in params.scad
+track_total_h = track_floor_t + rail_ch_wall_h;
 
-// Bearing arc radii (distance from rotation axis to bearing contact line)
-bear_r_L = corner_inner_r + track_wall_t + track_inner_w / 2 - cart_body_w / 2 - bearing_w / 2;
-bear_r_R = corner_inner_r + track_wall_t + track_inner_w / 2 + cart_body_w / 2 + bearing_w / 2;
+// Bearing arc radii — distance from corner origin to bearing centre
+bear_r_L = corner_inner_r + bear_cx_L;
+bear_r_R = corner_inner_r + bear_cx_R;
 
 // Arc angle to cover conn_pad_len at the floor centreline radius
-corner_cl_r = corner_inner_r + track_wall_t + track_inner_w / 2;
-pad_angle   = conn_pad_len / corner_cl_r * 180 / PI;  // ≈ 9.2°
+corner_cl_r = corner_inner_r + track_total_w / 2;
+pad_angle   = conn_pad_len / corner_cl_r * 180 / PI;
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
@@ -34,40 +34,40 @@ module puzzle_socket_2d() {
         circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
-// ── Swept walls (inner + outer, full 90°, flush at Z=0) ───────────────────────
-// In rotate_extrude, profile Y = 3D Z.  Y = 0 → Z = 0 (flat bottom).
-module corner_walls() {
-    // Inner wall
-    rotate_extrude(angle = 90, $fn = 120)
-        translate([corner_inner_r, 0, 0])
-            square([track_wall_t, track_total_h]);
+// ── Single bearing groove 2D profile (for rotate_extrude) ────────────────────
+// r_cx = radius from corner origin to bearing centre.
+// In rotate_extrude: X = radial distance, Y = axial height (becomes Z in 3D).
+module corner_groove_2d(r_cx) {
     // Outer wall
-    rotate_extrude(angle = 90, $fn = 120)
-        translate([corner_inner_r + track_inner_w + track_wall_t, 0, 0])
-            square([track_wall_t, track_total_h]);
+    translate([r_cx - rail_ch_w / 2 - rail_ch_wall_t, 0])
+        square([rail_ch_wall_t, track_total_h]);
+    // Floor
+    translate([r_cx - rail_ch_w / 2, 0])
+        square([rail_ch_w, track_floor_t]);
+    // Inner wall
+    translate([r_cx + rail_ch_w / 2, 0])
+        square([rail_ch_wall_t, track_total_h]);
 }
 
-// ── End floor arcs (full inner width, pad_angle deep at each end) ─────────────
+// ── Swept bearing groove channels (full 90°) ──────────────────────────────────
+module corner_bearing_grooves() {
+    rotate_extrude(angle = 90, $fn = 120)
+        corner_groove_2d(bear_r_L);
+    rotate_extrude(angle = 90, $fn = 120)
+        corner_groove_2d(bear_r_R);
+}
+
+// ── End floor arcs (full track width, pad_angle deep at each end) ─────────────
 module corner_end_floors() {
     // Entry end (0° to pad_angle)
     rotate_extrude(angle = pad_angle, $fn = 120)
-        translate([corner_inner_r + track_wall_t, 0, 0])
-            square([track_inner_w, track_floor_t]);
+        translate([corner_inner_r, 0, 0])
+            square([track_total_w, track_floor_t]);
     // Exit end (90° - pad_angle to 90°)
     rotate([0, 0, 90 - pad_angle])
         rotate_extrude(angle = pad_angle, $fn = 120)
-            translate([corner_inner_r + track_wall_t, 0, 0])
-                square([track_inner_w, track_floor_t]);
-}
-
-// ── Bearing contact arc strips (full 90°, narrow rings at each bearing radius) ─
-module corner_bearing_rails() {
-    rotate_extrude(angle = 90, $fn = 120)
-        translate([bear_r_L - bear_rail_w / 2, 0, 0])
-            square([bear_rail_w, track_floor_t]);
-    rotate_extrude(angle = 90, $fn = 120)
-        translate([bear_r_R - bear_rail_w / 2, 0, 0])
-            square([bear_rail_w, track_floor_t]);
+            translate([corner_inner_r, 0, 0])
+                square([track_total_w, track_floor_t]);
 }
 
 // ── Entry face (θ=0°, Y=0): through-hole sockets in end-section floor ─────────
@@ -90,9 +90,8 @@ module exit_bot_tabs() {
 // ── Assembled corner ──────────────────────────────────────────────────────────
 difference() {
     union() {
-        corner_walls();
+        corner_bearing_grooves();
         corner_end_floors();
-        corner_bearing_rails();
         exit_bot_tabs();
     }
     entry_bot_sockets();

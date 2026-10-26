@@ -5,29 +5,31 @@ bearing_od = 22;
 bearing_id = 8;
 bearing_w  = 7;
 
-// Track channel (straight and corner sections share this profile)
-// body 50 mm + posts 10 mm each side = 70 mm total → 3 mm clearance each side in 76 mm channel
-track_inner_w   = 76;    // inner width of U-channel
-track_wall_h    = 11;    // wall height above floor
-track_wall_t    = 5;     // wall thickness
-track_floor_t   = 4;     // floor thickness
-track_sec_len   = 200;   // length of one straight section
+// Track section
+track_sec_len = 200;   // length of one straight section
+track_floor_t = 4;     // floor thickness
 
-// Bearing contact floor rails — narrow floor strips along the two bearing lines.
-// The floor is ONLY present at (a) these two rails and (b) full-width end sections
-// under the connector pads.  Everything else is open to save material.
+// Bearing groove rails — two narrow U-channels (one per bearing) replace the
+// single large U-channel.  Each groove captures one 608ZZ bearing laterally;
+// the floor carries vertical load.  No outer containment walls needed.
 //
-//  Floor plan view (bottom of straight section):
-//   [=====END FLOOR=====]  ← full width, conn_pad_len deep
-//   |  |             |  |
-//   |  | rail   rail |  |  ← two 9 mm rails running full length
-//   |  |             |  |
-//   [=====END FLOOR=====]
+//  Cross-section view (one groove):
 //
-// Rail X positions: bearing midpoint sits at (channel_centre ± body_half ∓ bearing_w/2)
-// Left  rail centre: track_wall_t + track_inner_w/2 − cart_body_w/2 − bearing_w/2
-// Right rail centre: track_wall_t + track_inner_w/2 + cart_body_w/2 + bearing_w/2
-bear_rail_w = bearing_w + 2;  // 9 mm — bearing width + 2 mm margin
+//    ┌─┐         ┌─┐
+//    │ │  O OOO  │ │   ← 608ZZ bearing (22 mm OD) riding in groove
+//    └─┴─────────┴─┘
+//    ←t→← ch_w →←t→
+//
+rail_ch_w      = 8.0;   // inner groove width — bearing_w (7 mm) + 1 mm clearance
+rail_ch_wall_t = 3.5;   // groove wall thickness each side
+rail_ch_wall_h = 6.0;   // groove wall height above floor
+
+// Bearing centre X positions and total track width.
+// OpenSCAD resolves variables lazily, so cart_body_w (defined in Cart section
+// below) can be referenced here without forward-declaration issues.
+bear_cx_L     = rail_ch_wall_t + rail_ch_w / 2;               //  7.5 mm from left edge
+bear_cx_R     = bear_cx_L + cart_body_w + bearing_w;          // 64.5 mm from left edge
+track_total_w = bear_cx_R + rail_ch_w / 2 + rail_ch_wall_t;  // 72 mm total width
 
 // Track end connectors — puzzle-piece tabs flush with the track floor.
 // Tabs extrude from the end face at Z=0, spanning the full floor thickness
@@ -53,11 +55,10 @@ tab_clr      = 1.0;          // total clearance on width/diameter (0.5 mm per si
 conn_pad_w   = tab_knob_d + 6;                  // 28 mm — connector cross-section width
 conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm — floor depth / tab reach
 
-// X centres of the two connector pads — quarter-points of the inner channel.
-// Pad 1 centre ≈ 24 mm from left edge; Pad 2 centre ≈ 62 mm from left edge.
-// (track_wall_t = 5; inner = 76; quarters at 5+19=24 and 5+57=62)
-bot_conn_x1 = track_wall_t + track_inner_w * 0.25;
-bot_conn_x2 = track_wall_t + track_inner_w * 0.75;
+// X centres of the two connector pads — quarter-points of total track width.
+// track_total_w = 72 mm → quarters at 18 mm and 54 mm.
+bot_conn_x1 = track_total_w * 0.25;   // 18 mm
+bot_conn_x2 = track_total_w * 0.75;   // 54 mm
 
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate

@@ -12,11 +12,10 @@ include <params.scad>
 // The barrier wall is high enough to catch the cart body (24 mm above the track
 // floor) and prevent it rolling off the end.
 
-track_total_w = track_inner_w + 2 * track_wall_t;
-track_total_h = track_floor_t + track_wall_h;
-
-stop_len      = conn_pad_len + track_wall_t + 4;  // 32 mm — connector pad + barrier + clearance
-barrier_h     = cart_body_h + 6;                  // 28 mm — above cart body top
+// track_total_w now defined in params.scad
+barrier_wall_t = 5;
+stop_len       = conn_pad_len + barrier_wall_t + 4;  // 32 mm — connector pad + barrier + clearance
+barrier_h      = cart_body_h + 6;                    // 28 mm — above cart body top
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
@@ -33,19 +32,14 @@ module puzzle_socket_2d() {
         circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
-// ── Shared body: two walls + full floor + barrier wall ────────────────────────
+// ── Shared body: full floor + barrier wall ────────────────────────────────────
 module stop_body() {
     union() {
-        // Left wall — flush at Z=0
-        cube([track_wall_t, stop_len, track_total_h]);
-        // Right wall
-        translate([track_total_w - track_wall_t, 0, 0])
-            cube([track_wall_t, stop_len, track_total_h]);
-        // Full-width floor (short section — full floor is fine here)
+        // Full-width floor
         cube([track_total_w, stop_len, track_floor_t]);
         // Barrier wall at +Y end — blocks the cart from rolling out
-        translate([0, stop_len - track_wall_t, 0])
-            cube([track_total_w, track_wall_t, barrier_h]);
+        translate([0, stop_len - barrier_wall_t, 0])
+            cube([track_total_w, barrier_wall_t, barrier_h]);
     }
 }
 

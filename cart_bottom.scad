@@ -18,7 +18,13 @@ peg_y = cart_body_len / 2 - cart_wall_t / 2;  // 66.5 mm from centre
 
 // ── Stub axle post ─────────────────────────────────────────────────────────────
 module stub_axle() {
-    cylinder(d = post_d, h = post_len - 1, $fn = 32);
+    // Shoulder collar — bearing inner race presses against this, stopping it at
+    // post_shoulder distance from the cart body face (outer race never rubs body)
+    cylinder(d = post_shoulder_d, h = post_shoulder, $fn = 32);
+    // Main shaft — bearing press-fits here
+    translate([0, 0, post_shoulder])
+        cylinder(d = post_d, h = post_len - post_shoulder - 1, $fn = 32);
+    // Tapered nose — lead-in to ease bearing on
     translate([0, 0, post_len - 1])
         cylinder(d1 = post_d, d2 = post_d - 0.6, h = 1, $fn = 32);
 }

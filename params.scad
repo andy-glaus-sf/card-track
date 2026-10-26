@@ -84,9 +84,12 @@ peg_h         = 3.0;   // peg height — 0.2 mm shorter than hole so it seats fu
 hole_d        = 4.3;   // plate hole diameter (0.3 mm clearance — easy slide, glue fills gap)
 
 // Stub-axle posts (bearing friction-fit over post)
-post_d       = 8.2;   // 0.2 mm press-fit onto 608ZZ bore (8 mm)
-// post breakdown: 1.5 mm shoulder gap + 7 mm bearing + 1.5 mm retention nose = 10 mm
-post_len     = 10;
+post_d          = 8.2;   // 0.2 mm press-fit onto 608ZZ bore (8 mm)
+post_shoulder_d = 14;    // shoulder collar diameter — larger than inner race OD (~12 mm)
+                          // but smaller than outer race OD (22 mm), so collar contacts
+                          // inner race and stops bearing without touching outer race
+// post breakdown: 1.5 mm shoulder collar + 7 mm bearing + 1.5 mm retention nose = 10 mm
+post_len        = 10;
 // post centre sits 9 mm above cart body bottom face:
 //   bearing centre = 11 mm above track floor  (= bearing_od/2)
 //   cart body bottom clears floor by 2 mm      (= 11 - 9)

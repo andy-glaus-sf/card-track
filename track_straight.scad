@@ -16,17 +16,11 @@ track_total_h = track_floor_t + rail_ch_wall_h;
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
-    translate([-tab_neck_w / 2, 0])
-        square([tab_neck_w, tab_neck_l]);
-    translate([0, tab_neck_l])
-        circle(d = tab_knob_d, $fn = 64);
+    circle(d = tab_knob_d, $fn = 64);
 }
 
 module puzzle_socket_2d() {
-    translate([-(tab_neck_w + tab_clr) / 2, 0])
-        square([tab_neck_w + tab_clr, tab_neck_l + tab_clr / 2]);
-    translate([0, tab_neck_l])
-        circle(d = tab_knob_d + tab_clr, $fn = 64);
+    circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
 // ── Single bearing groove channel (extrudes along Y) ─────────────────────────
@@ -78,9 +72,7 @@ module bot_socket(cx, y_face) {
 difference() {
     union() {
         track_body();
-        for (cx = [bot_conn_x1, bot_conn_x2])
-            bot_tab(cx, track_sec_len);
+        bot_tab(bot_conn_x, track_sec_len);
     }
-    for (cx = [bot_conn_x1, bot_conn_x2])
-        bot_socket(cx, 0);
+    bot_socket(bot_conn_x, 0);
 }

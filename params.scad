@@ -62,10 +62,8 @@ tab_clr      = 1.0;          // total clearance on width/diameter (0.5 mm per si
 conn_pad_w   = tab_knob_d + 6;                  // 28 mm — connector cross-section width
 conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm — floor depth / tab reach
 
-// X centres of the two connector pads — at 1/3 and 2/3 of the gap between rails.
-// Both connectors land inside the gap, away from the rail bodies.
-bot_conn_x1 = gap_inner_L + gap_w / 3;
-bot_conn_x2 = gap_inner_R - gap_w / 3;
+// X centre of the single round connector — centred in the gap between the two rails.
+bot_conn_x = track_total_w / 2;
 
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate

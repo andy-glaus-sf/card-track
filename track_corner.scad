@@ -21,17 +21,11 @@ pad_angle   = conn_pad_len / corner_cl_r * 180 / PI;
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
-    translate([-tab_neck_w / 2, 0])
-        square([tab_neck_w, tab_neck_l]);
-    translate([0, tab_neck_l])
-        circle(d = tab_knob_d, $fn = 64);
+    circle(d = tab_knob_d, $fn = 64);
 }
 
 module puzzle_socket_2d() {
-    translate([-(tab_neck_w + tab_clr) / 2, 0])
-        square([tab_neck_w + tab_clr, tab_neck_l + tab_clr / 2]);
-    translate([0, tab_neck_l])
-        circle(d = tab_knob_d + tab_clr, $fn = 64);
+    circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
 // ── Single bearing groove 2D profile (for rotate_extrude) ────────────────────
@@ -70,21 +64,19 @@ module corner_end_floors() {
                 square([gap_w, track_floor_t]);
 }
 
-// ── Entry face (θ=0°, Y=0): through-hole sockets in end-section floor ─────────
+// ── Entry face (θ=0°, Y=0): through-hole socket in end-section floor ──────────
 module entry_bot_sockets() {
-    for (cx = [corner_inner_r + bot_conn_x1, corner_inner_r + bot_conn_x2])
-        translate([cx, 0, -0.1])
-            linear_extrude(height = track_floor_t + 0.2)
-                puzzle_socket_2d();
+    translate([corner_inner_r + bot_conn_x, 0, -0.1])
+        linear_extrude(height = track_floor_t + 0.2)
+            puzzle_socket_2d();
 }
 
-// ── Exit face (θ=90°, X=0): tabs protruding in −X, flush with floor ───────────
+// ── Exit face (θ=90°, X=0): tab protruding in −X, flush with floor ────────────
 module exit_bot_tabs() {
-    for (cy = [corner_inner_r + bot_conn_x1, corner_inner_r + bot_conn_x2])
-        translate([0, cy, 0])
-            rotate([0, 0, 90])
-                linear_extrude(height = track_floor_t)
-                    puzzle_tab_2d();
+    translate([0, corner_inner_r + bot_conn_x, 0])
+        rotate([0, 0, 90])
+            linear_extrude(height = track_floor_t)
+                puzzle_tab_2d();
 }
 
 // ── Assembled corner ──────────────────────────────────────────────────────────

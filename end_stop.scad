@@ -19,17 +19,11 @@ barrier_h      = cart_body_h + 6;                    // 28 mm — above cart bod
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
-    translate([-tab_neck_w / 2, 0])
-        square([tab_neck_w, tab_neck_l]);
-    translate([0, tab_neck_l])
-        circle(d = tab_knob_d, $fn = 64);
+    circle(d = tab_knob_d, $fn = 64);
 }
 
 module puzzle_socket_2d() {
-    translate([-(tab_neck_w + tab_clr) / 2, 0])
-        square([tab_neck_w + tab_clr, tab_neck_l + tab_clr / 2]);
-    translate([0, tab_neck_l])
-        circle(d = tab_knob_d + tab_clr, $fn = 64);
+    circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
 // ── Shared body: full floor + barrier wall ────────────────────────────────────
@@ -43,20 +37,18 @@ module stop_body() {
     }
 }
 
-// ── Socket through-holes in floor at -Y face (socket-type stop) ───────────────
+// ── Socket through-hole in floor at -Y face (socket-type stop) ────────────────
 module socket_cuts() {
-    for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx, 0, -0.1])
-            linear_extrude(height = track_floor_t + 0.2)
-                puzzle_socket_2d();
+    translate([bot_conn_x, 0, -0.1])
+        linear_extrude(height = track_floor_t + 0.2)
+            puzzle_socket_2d();
 }
 
-// ── Tabs at +Y face: protrude beyond end face, span full floor thickness ───────
+// ── Tab at +Y face: protrudes beyond end face, spans full floor thickness ──────
 module tab_protrusions() {
-    for (cx = [bot_conn_x1, bot_conn_x2])
-        translate([cx, stop_len, 0])
-            linear_extrude(height = track_floor_t)
-                puzzle_tab_2d();
+    translate([bot_conn_x, stop_len, 0])
+        linear_extrude(height = track_floor_t)
+            puzzle_tab_2d();
 }
 
 // ── End stop A — SOCKET type (fits +Y tab end of straight section) ────────────

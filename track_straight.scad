@@ -15,12 +15,19 @@ include <params.scad>
 track_total_h = track_floor_t + rail_ch_wall_h;
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
+// Neck + round knob — knob is wider than neck so once seated past the socket
+// neck it cannot pull back through, locking the connection.
 module puzzle_tab_2d() {
-    circle(d = tab_knob_d, $fn = 64);
+    translate([-tab_neck_w / 2, 0])
+        square([tab_neck_w, tab_neck_l]);
+    translate([0, tab_neck_l])
+        circle(d = tab_knob_d, $fn = 64);
 }
-
 module puzzle_socket_2d() {
-    circle(d = tab_knob_d + tab_clr, $fn = 64);
+    translate([-(tab_neck_w + tab_clr) / 2, 0])
+        square([tab_neck_w + tab_clr, tab_neck_l + tab_clr / 2]);
+    translate([0, tab_neck_l])
+        circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
 // ── Single bearing groove channel (extrudes along Y) ─────────────────────────

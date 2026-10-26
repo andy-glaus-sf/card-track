@@ -21,11 +21,16 @@ pad_angle   = conn_pad_len / corner_cl_r * 180 / PI;
 
 // ── 2D puzzle profiles ────────────────────────────────────────────────────────
 module puzzle_tab_2d() {
-    circle(d = tab_knob_d, $fn = 64);
+    translate([-tab_neck_w / 2, 0])
+        square([tab_neck_w, tab_neck_l]);
+    translate([0, tab_neck_l])
+        circle(d = tab_knob_d, $fn = 64);
 }
-
 module puzzle_socket_2d() {
-    circle(d = tab_knob_d + tab_clr, $fn = 64);
+    translate([-(tab_neck_w + tab_clr) / 2, 0])
+        square([tab_neck_w + tab_clr, tab_neck_l + tab_clr / 2]);
+    translate([0, tab_neck_l])
+        circle(d = tab_knob_d + tab_clr, $fn = 64);
 }
 
 // ── Single bearing groove 2D profile (for rotate_extrude) ────────────────────

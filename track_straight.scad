@@ -52,10 +52,11 @@ module track_body() {
         translate([bear_cx_R - rail_ch_w / 2 - rail_ch_wall_t, 0, 0])
             bearing_groove(track_sec_len);
 
-        // End floor bridges — full-width, conn_pad_len deep at each end
-        cube([track_total_w, conn_pad_len, track_floor_t]);
-        translate([0, track_sec_len - conn_pad_len, 0])
-            cube([track_total_w, conn_pad_len, track_floor_t]);
+        // End cross-bridges — span only the gap between rails, conn_pad_len deep
+        translate([gap_inner_L, 0, 0])
+            cube([gap_w, conn_pad_len, track_floor_t]);
+        translate([gap_inner_L, track_sec_len - conn_pad_len, 0])
+            cube([gap_w, conn_pad_len, track_floor_t]);
     }
 }
 

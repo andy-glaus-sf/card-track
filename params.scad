@@ -24,12 +24,18 @@ rail_ch_w      = 8.0;   // inner groove width — bearing_w (7 mm) + 1 mm cleara
 rail_ch_wall_t = 3.5;   // groove wall thickness each side
 rail_ch_wall_h = 6.0;   // groove wall height above floor
 
-// Bearing centre X positions and total track width.
-// OpenSCAD resolves variables lazily, so cart_body_w (defined in Cart section
-// below) can be referenced here without forward-declaration issues.
-bear_cx_L     = rail_ch_wall_t + rail_ch_w / 2;               //  7.5 mm from left edge
-bear_cx_R     = bear_cx_L + cart_body_w + bearing_w;          // 64.5 mm from left edge
-track_total_w = bear_cx_R + rail_ch_w / 2 + rail_ch_wall_t;  // 72 mm total width
+// Bearing centre X positions, gap geometry, and total track width.
+// OpenSCAD resolves variables lazily, so cart_body_w / post_len (defined in
+// Cart section below) can be referenced here without forward-declaration issues.
+post_shoulder = 1.5;   // axial gap between body face and bearing inner race (from post breakdown)
+bear_cx_L     = rail_ch_wall_t + rail_ch_w / 2;
+bear_cx_R     = bear_cx_L + cart_body_w + 2 * (post_shoulder + bearing_w / 2);
+track_total_w = bear_cx_R + rail_ch_w / 2 + rail_ch_wall_t;
+
+// Inner faces of the gap between the two rails
+gap_inner_L = bear_cx_L + rail_ch_w / 2 + rail_ch_wall_t;
+gap_inner_R = bear_cx_R - rail_ch_w / 2 - rail_ch_wall_t;
+gap_w       = gap_inner_R - gap_inner_L;
 
 // Track end connectors — puzzle-piece tabs flush with the track floor.
 // Tabs extrude from the end face at Z=0, spanning the full floor thickness
@@ -55,15 +61,14 @@ tab_clr      = 1.0;          // total clearance on width/diameter (0.5 mm per si
 conn_pad_w   = tab_knob_d + 6;                  // 28 mm — connector cross-section width
 conn_pad_len = tab_neck_l + tab_knob_d / 2 + 4; // 23 mm — floor depth / tab reach
 
-// X centres of the two connector pads — quarter-points of total track width.
-// track_total_w = 72 mm → quarters at 18 mm and 54 mm.
-bot_conn_x1 = track_total_w * 0.25;   // 18 mm
-bot_conn_x2 = track_total_w * 0.75;   // 54 mm
+// X centres of the two connector pads — at 1/3 and 2/3 of the gap between rails.
+// Both connectors land inside the gap, away from the rail bodies.
+bot_conn_x1 = gap_inner_L + gap_w / 3;
+bot_conn_x2 = gap_inner_R - gap_w / 3;
 
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate
 plate_t      = 4;      // plate thickness (thicker to give pegs something to grip)
-// body is 50 mm wide; posts (10 mm each side) bring total to 70 mm → 3 mm clearance each side in 76 mm channel
 cart_body_w  = 50;
 cart_body_h  = 22;     // height of cart body — reduced 4 mm from original 26 mm
 wheelbase    = 120;    // front-to-rear axle spacing

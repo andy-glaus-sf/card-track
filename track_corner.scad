@@ -61,13 +61,13 @@ module corner_bearing_grooves() {
 module corner_end_floors() {
     // Entry end (0° to pad_angle)
     rotate_extrude(angle = pad_angle, $fn = 120)
-        translate([corner_inner_r, 0, 0])
-            square([track_total_w, track_floor_t]);
+        translate([corner_inner_r + gap_inner_L, 0, 0])
+            square([gap_w, track_floor_t]);
     // Exit end (90° - pad_angle to 90°)
     rotate([0, 0, 90 - pad_angle])
         rotate_extrude(angle = pad_angle, $fn = 120)
-            translate([corner_inner_r, 0, 0])
-                square([track_total_w, track_floor_t]);
+            translate([corner_inner_r + gap_inner_L, 0, 0])
+                square([gap_w, track_floor_t]);
 }
 
 // ── Entry face (θ=0°, Y=0): through-hole sockets in end-section floor ─────────

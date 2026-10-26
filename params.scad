@@ -9,6 +9,9 @@ bearing_w  = 7;
 track_sec_len = 200;   // length of one straight section
 track_floor_t = 4;     // floor thickness
 
+// Cart body width — defined here early because rail spacing depends on it
+cart_body_w  = 50;
+
 // Bearing groove rails — two narrow U-channels (one per bearing) replace the
 // single large U-channel.  Each groove captures one 608ZZ bearing laterally;
 // the floor carries vertical load.  No outer containment walls needed.
@@ -25,9 +28,7 @@ rail_ch_wall_t = 3.5;   // groove wall thickness each side
 rail_ch_wall_h = 6.0;   // groove wall height above floor
 
 // Bearing centre X positions, gap geometry, and total track width.
-// OpenSCAD resolves variables lazily, so cart_body_w / post_len (defined in
-// Cart section below) can be referenced here without forward-declaration issues.
-post_shoulder = 1.5;   // axial gap between body face and bearing inner race (from post breakdown)
+post_shoulder = 1.5;   // axial gap between body face and bearing inner race
 bear_cx_L     = rail_ch_wall_t + rail_ch_w / 2;
 bear_cx_R     = bear_cx_L + cart_body_w + 2 * (post_shoulder + bearing_w / 2);
 track_total_w = bear_cx_R + rail_ch_w / 2 + rail_ch_wall_t;
@@ -69,7 +70,7 @@ bot_conn_x2 = gap_inner_R - gap_w / 3;
 // Cart
 cart_plate   = 200;    // 200 × 200 mm top plate
 plate_t      = 4;      // plate thickness (thicker to give pegs something to grip)
-cart_body_w  = 50;
+// cart_body_w defined above (rail spacing depends on it)
 cart_body_h  = 22;     // height of cart body — reduced 4 mm from original 26 mm
 wheelbase    = 120;    // front-to-rear axle spacing
 cart_body_len = wheelbase + 20;  // 140 mm front-to-rear

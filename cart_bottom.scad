@@ -59,7 +59,7 @@ module alignment_pegs() {
 // Z = 0  → body bottom (open)
 // Z = 9  → post / bearing centre
 // Z = 22 → body top (open) / pegs start
-// Z = 29 → peg tips (3 mm above plate top after assembly)
+// Z = 25 → peg tips (flush with or below plate top face after assembly)
 
 translate([0, 0, cart_body_h / 2])
     cart_body();

@@ -76,10 +76,12 @@ cart_wall_t   = 7;               // hollow cart body wall thickness (all four si
 
 // Alignment pegs (body → plate)
 // Pegs sit at the 4 solid corners of the body top face, outside the lightening pocket.
-// Plate holes are through-holes; pegs protrude above the plate surface for grip during gluing.
-peg_d    = 4.0;   // peg cylinder diameter
-peg_h    = 7.0;   // peg height above body top face (extends 3 mm above plate)
-hole_d   = 4.3;   // plate hole diameter (0.3 mm clearance — easy slide, glue fills gap)
+// Plate holes are blind — open from the bottom face only, leaving a solid top skin.
+// Peg height is set equal to hole depth so pegs are fully captured and flush at the top.
+peg_d         = 4.0;   // peg cylinder diameter
+peg_hole_depth = 3.2;  // blind hole depth — leaves 0.8 mm skin at plate top face
+peg_h         = 3.0;   // peg height — 0.2 mm shorter than hole so it seats fully
+hole_d        = 4.3;   // plate hole diameter (0.3 mm clearance — easy slide, glue fills gap)
 
 // Stub-axle posts (bearing friction-fit over post)
 post_d       = 8.2;   // 0.2 mm press-fit onto 608ZZ bore (8 mm)

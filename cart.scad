@@ -60,6 +60,6 @@ translate([0, 0, cart_body_h + plate_t / 2])
     difference() {
         cube([cart_plate, cart_plate, plate_t], center = true);
         for (sx = [-1, 1], sy = [-1, 1])
-            translate([sx * peg_x, sy * peg_y, -plate_t / 2 - 0.1])
-                cylinder(d = hole_d, h = plate_t + 0.2, $fn = 32);
+            translate([sx * peg_x, sy * peg_y, -plate_t / 2])
+                cylinder(d = hole_d, h = peg_hole_depth, $fn = 32);
     }
